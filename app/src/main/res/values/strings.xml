@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">LoginSocialNet</string>
+
+    <string name="facebook_app_id">708751815973305</string>
+
+    <string name="cancel_login">Se canceló inicio de sesión</string>
+    <string name="error_login">Ocurrió error de inicio de sesión</string>
+
+</resources>
