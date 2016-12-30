@@ -12,10 +12,17 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
     /*Variables primer video*/
@@ -23,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
 
     /*Variables segundo video u opción B) para obtener datos de usuario */
-    private ProfileTracker profileTracker;
+    //private ProfileTracker profileTracker;
     private AccessTokenTracker accessTokenTracker;
 
     @Override
@@ -35,27 +42,53 @@ public class LoginActivity extends AppCompatActivity {
         //FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.loginButton);
+        loginButton.setReadPermissions(Arrays.asList(
+                "public_profile", "email", "user_birthday", "user_friends"));
 
-      loginButton.setReadPermissions("email");
         loginButton.registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        Log.i("TAG: ", "Pasamos onSuccess");
-                        Log.i("TAG ", loginResult.getAccessToken().getPermissions().toString()) ;
+                        Log.d("TAG: 1. ", " LLegamos onSuccess");
+                        Log.d("TAG  2. Permisos ", loginResult.getAccessToken().getPermissions().toString()) ;
+
+                        // App code
+                        GraphRequest request = GraphRequest.newMeRequest(
+                                loginResult.getAccessToken(),
+                                new GraphRequest.GraphJSONObjectCallback() {
+                                    @Override
+                                    public void onCompleted(JSONObject object, GraphResponse response) {
+                                        Log.v("LoginActivity", response.toString());
+
+                                        // Application code
+                                        try {
+                                            String email = object.getString("email");
+                                            Log.d("TAG 6.-Email = ", " " + email);
+                                            String birthday = object.getString("birthday"); // 01/31/1980 format
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                });
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id,name,email,gender,birthday");
+                        request.setParameters(parameters);
+                        request.executeAsync();
+
                         goMainScreen();
 
                     }
 
                     @Override
                     public void onCancel() {
-                        Log.i("TAG: ", "Pasamos onCancel");
+                        Log.d("TAG: ", "Pasamos onCancel");
                         Toast.makeText(getApplicationContext(), R.string.cancel_login, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onError(FacebookException error) {
-                        Log.i("TAG: ", "Pasamos onError");
+                        Log.d("TAG: ", "Pasamos onError");
                         Toast.makeText(getApplicationContext(), R.string.error_login, Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -82,8 +115,8 @@ public class LoginActivity extends AppCompatActivity {
             // Tratar de ver como agregar una excepción o algo que me deje avanzar aunque esten vacíos los datos
             //Después ver por que razón estarían vacíos los datos
 
-            Log.d("Nombre de Usuario", profile.getFirstName() ) ;
-            Log.d("ID de Usuario", profile.getId() ) ;
+            Log.d("TAG 3.-Nomb de Usuario", profile.getFirstName() ) ;
+            Log.d("TAG 4.-ID de Usuario  ", profile.getId() ) ;
             intent.putExtra("name", profile.getFirstName());
             intent.putExtra("id" , profile.getId() ) ;
             startActivity(intent);
@@ -105,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
-        Log.i("TAG: ", "Pasamos onActivity result");
+        Log.d("TAG: 5. ", "Pasamos onActivity result");
     }
 
 }
