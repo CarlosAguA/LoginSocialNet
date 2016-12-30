@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*Condición para no mostrar aplicación en mainActivity*/
+
         if (AccessToken.getCurrentAccessToken() == null) {
             goLoginScreen();
         }
@@ -35,13 +35,14 @@ public class MainActivity extends AppCompatActivity {
        en el método goMainscreen()de la Actividad LoginActivity
       */
 
+        //Bundle inBundle = getIntent().getExtras();
+        //String name = inBundle.get("name").toString();
+        /*Prueba para ver log*/
+        //String nombreUsuario = getIntent().getStringExtra("name");
+        //String idUsuario = getIntent().getStringExtra("id");
+        //Log.d("Nombre de Usuario", nombreUsuario);
+       // Log.d("ID de Usuario", idUsuario);
       /*
-        Bundle inBundle = getIntent().getExtras();
-        String name = inBundle.get("name").toString();
-        String nombreUsuario = getIntent().getStringExtra("name");
-
-        Log.d("Nombre de Usuario", nombreUsuario);
-
        TextView nameView = (TextView)findViewById(R.id.text_view_full_name);
        nameView.setText( nombreUsuario) ;
        */
@@ -50,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void goLoginScreen() {
         Intent intent = new Intent(this, LoginActivity.class);
-        intent.addFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK );
+        //intent.addFlags (Intent.FLAG_ACTIVITY_CLEAR_TOP| Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK );
+        Log.d("Cerro sesión Usuario", "Sesión finalizada" ) ;
         startActivity(intent) ;
     }
 
